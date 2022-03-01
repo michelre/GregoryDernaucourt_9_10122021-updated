@@ -13,7 +13,9 @@ export const filteredBills = (data, status) => {
       // in jest environment
       if (typeof jest !== 'undefined') {
         selectCondition = (bill.status === status)
-      } else {
+      }
+      /* istanbul ignore next */
+      else {
         // in prod environment
         const userEmail = JSON.parse(localStorage.getItem("user")).email
         selectCondition =
@@ -73,20 +75,18 @@ export default class {
     $('#arrow-icon1').click((e) => this.handleShowTickets(e, bills, 1))
     $('#arrow-icon2').click((e) => this.handleShowTickets(e, bills, 2))
     $('#arrow-icon3').click((e) => this.handleShowTickets(e, bills, 3))
-    this.getBillsAllUsers()
     new Logout({ localStorage, onNavigate })
   }
 
   handleClickIconEye = () => {
     const billUrl = $('#icon-eye-d').attr("data-bill-url")
     const imgWidth = Math.floor($('#modaleFileAdmin1').width() * 0.8)
-    $('#modaleFileAdmin1').find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} /></div>`)
+    $('#modaleFileAdmin1').find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} alt="Bill"/></div>`)
     if (typeof $('#modaleFileAdmin1').modal === 'function') $('#modaleFileAdmin1').modal('show')
   }
 
   handleEditTicket(e, bill, bills) {
-    e.preventDefault()
-    if (this.counter === undefined || this.id !== bill.id || this.index !== undefined) this.counter = 0
+    if (this.counter === undefined || this.id !== bill.id) this.counter = 0
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id
     if (this.counter % 2 === 0) {
       bills.forEach(b => {
@@ -100,7 +100,7 @@ export default class {
       $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
 
       $('.dashboard-right-container div').html(`
-        <div id="big-billed-icon"> ${BigBilledIcon} </div>
+        <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
       `)
       $('.vertical-navbar').css({ height: '120vh' })
       this.counter++
@@ -131,7 +131,6 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
-    e.preventDefault()
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
@@ -154,8 +153,6 @@ export default class {
 
   }
 
-  // not need to cover this function by tests
-  /* istanbul ignore next */
   getBillsAllUsers = () => {
     if (this.store) {
       return this.store
@@ -171,11 +168,14 @@ export default class {
             }))
           return bills
         })
-        .catch(console.log)
+        .catch(error => {
+          throw error;
+        })
     }
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       return this.store
