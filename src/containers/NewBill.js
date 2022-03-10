@@ -34,12 +34,11 @@ export default class NewBill {
           }
         })
         .then(({ fileUrl, key }) => {
-          console.log(fileUrl)
           this.billId = key
           this.fileUrl = fileUrl
           this.fileName = fileName
         }).catch(error => console.error(error))
-    } else if (!/(?:jpg|jpeg|png)/g.test(file.name)) {
+    } else {
       alert(('Only jpg, jpeg or png files allowed!'))
       e.target.value = ''
     }

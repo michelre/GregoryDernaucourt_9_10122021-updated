@@ -190,6 +190,28 @@ describe("Given I am connected as an employee", () => {
       const buttonNewBill = jest.fn()
       if (buttonNewBill) expect(handleClickNewBill).not.toHaveBeenCalled()
     })
+
+    test('Then I fetch bills', () => {
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+
+      mockStore.bills = jest.fn().mockImplementationOnce(() => {
+        return {
+          list: jest.fn().mockResolvedValue([{id: 1, data: () => ({date: ''})}])
+        }
+      })
+
+      const bills = new Bills({
+        document, onNavigate, store: mockStore, localStorage
+      })
+
+      const res = bills.getBills()
+
+      expect(res).toEqual(Promise.resolve({}))
+    })
   })
 
 })
